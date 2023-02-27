@@ -1,6 +1,8 @@
 package de.adito.nbm.encoding.statusline;
 
+import com.google.common.annotations.VisibleForTesting;
 import de.adito.nbm.encoding.CharDetEncodingProvider;
+import de.adito.notification.INotificationFacade;
 import de.adito.swing.KeyForwardAdapter;
 import de.adito.swing.popup.*;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -9,7 +11,7 @@ import org.mozilla.universalchardet.Constants;
 import org.netbeans.api.actions.Savable;
 import org.netbeans.api.queries.FileEncodingQuery;
 import org.openide.*;
-import org.openide.awt.*;
+import org.openide.awt.StatusLineElementProvider;
 import org.openide.filesystems.*;
 import org.openide.loaders.DataObject;
 import org.openide.util.*;
@@ -91,7 +93,7 @@ public class StatusLineEncodingProvider implements StatusLineElementProvider, Pr
       else
         encodingsNotSupportedByPlugin.add(k);
     }
-    model.addAll(encodingsNotSupportedByPlugin);
+    encodingsNotSupportedByPlugin.forEach(model::addElement);
 
     encodingList.setModel(model);
     encodingList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -106,7 +108,7 @@ public class StatusLineEncodingProvider implements StatusLineElementProvider, Pr
         String selectedEncoding = encodingList.getSelectedValue();
         if (selectedEncoding != null)
         {
-          _setEncoding(selectedEncoding);
+          setEncoding(selectedEncoding);
           quickSearchCallback.quickSearchConfirmed();
           popupWindow.disposeWindow();
         }
@@ -158,7 +160,7 @@ public class StatusLineEncodingProvider implements StatusLineElementProvider, Pr
    */
   private void _update()
   {
-    FileObject fileObject = _getFileObject();
+    FileObject fileObject = getFileObject();
     _updateListeners(fileObject);
     _updateLabel(fileObject);
   }
@@ -222,9 +224,10 @@ public class StatusLineEncodingProvider implements StatusLineElementProvider, Pr
    *
    * @param pSelectedEncoding encoding that should be used to write the file contents to disk
    */
-  private void _setEncoding(String pSelectedEncoding)
+  @VisibleForTesting
+  void setEncoding(String pSelectedEncoding)
   {
-    FileObject fileObject = _getFileObject();
+    FileObject fileObject = getFileObject();
     if (fileObject == null)
       return;
     _saveAll();
@@ -241,14 +244,14 @@ public class StatusLineEncodingProvider implements StatusLineElementProvider, Pr
     }
     catch (IOException pE)
     {
-      NotificationDisplayer.getDefault().notify(pE.getClass().getSimpleName() + " while setting encoding",
-                                                NotificationDisplayer.Priority.NORMAL.getIcon(), pE.getMessage(), null);
+      INotificationFacade.INSTANCE.error(pE);
     }
     encodingList.clearSelection();
   }
 
   @Nullable
-  private FileObject _getFileObject()
+  @VisibleForTesting
+  FileObject getFileObject()
   {
     Mode editorMode = WindowManager.getDefault().findMode("editor");
     if (editorMode == null)
@@ -333,7 +336,7 @@ public class StatusLineEncodingProvider implements StatusLineElementProvider, Pr
       int index = source.locationToIndex(e.getPoint());
       if (index != -1)
       {
-        _setEncoding(source.getModel().getElementAt(index));
+        setEncoding(source.getModel().getElementAt(index));
         quickSearchCallback.quickSearchCanceled();
         popupWindow.disposeWindow();
       }
