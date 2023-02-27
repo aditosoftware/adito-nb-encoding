@@ -31,7 +31,7 @@ class StatusLineEncodingProviderTest
   class SetEncoding
   {
     /**
-     * Tests that an IOException will be logged, if a not existing encoding will be passed to the method.
+     * Tests that an IOException will be logged, if an invalid encoding will be passed to the method.
      */
     @Test
     @SneakyThrows
