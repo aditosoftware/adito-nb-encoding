@@ -5,12 +5,12 @@ import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.*;
 import org.mockito.*;
-import org.mockito.invocation.InvocationOnMock;
 import org.netbeans.api.queries.FileEncodingQuery;
 import org.openide.filesystems.FileObject;
 
 import javax.swing.*;
 import java.io.*;
+import java.lang.reflect.Field;
 import java.nio.charset.*;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -69,21 +69,19 @@ class StatusLineEncodingProviderTest
       Mockito.doReturn(new byte[0]).when(fileObject).asBytes();
       Mockito.doReturn(outputStream).when(fileObject).getOutputStream();
 
-      try (MockedStatic<FileEncodingQuery> fileEncodingQueryMockedStatic = Mockito.mockStatic(FileEncodingQuery.class);
-           MockedStatic<SwingUtilities> swingUtilitiesMockedStatic = Mockito.mockStatic(SwingUtilities.class, InvocationOnMock::callRealMethod);
-           MockedStatic<UIManager> uiManagerMockedStatic = Mockito.mockStatic(UIManager.class))
+      try (MockedStatic<FileEncodingQuery> fileEncodingQueryMockedStatic = Mockito.mockStatic(FileEncodingQuery.class))
       {
-
-        swingUtilitiesMockedStatic.when(SwingUtilities::isEventDispatchThread).thenReturn(true);
-
-        UIDefaults uiDefaults = Mockito.mock(UIDefaults.class);
-
-        uiManagerMockedStatic.when(UIManager::getDefaults).thenReturn(uiDefaults);
 
         fileEncodingQueryMockedStatic.when(() -> FileEncodingQuery.getEncoding(any())).thenReturn(StandardCharsets.UTF_8);
 
-        StatusLineEncodingProvider statusLineEncodingProvider = Mockito.spy(new StatusLineEncodingProvider());
+        StatusLineEncodingProvider statusLineEncodingProvider = Mockito.mock(StatusLineEncodingProvider.class);
         Mockito.doReturn(fileObject).when(statusLineEncodingProvider).getFileObject();
+        Mockito.doCallRealMethod().when(statusLineEncodingProvider).setEncoding(any());
+
+        Field field = statusLineEncodingProvider.getClass().getDeclaredField("encodingList");
+        field.setAccessible(true);
+
+        field.set(statusLineEncodingProvider, new JList<>());
 
         statusLineEncodingProvider.setEncoding(pEncoding);
       }
