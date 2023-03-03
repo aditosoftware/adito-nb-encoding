@@ -2,6 +2,11 @@ Manifest-Version: 1.0
 AutoUpdate-Show-In-Client: true
 OpenIDE-Module-Long-Description: The encoding plugin shows the encoding used for the file in the active editor and also allows the setting of a new encoding
   <p style="font-weight: bold;">Changelog</p>
+  <p style="font-weight: bold;">v1.0.8</p>
+  <p style="margin-left: 10px; font-weight: bold;">MINOR</p>
+  <ul>
+     <li>Error messages from the plugin now show up in the IDE log</li>
+  </ul>
   <p style="font-weight: bold;">v1.0.7</p>
   <p style="margin-left: 10px; font-weight: bold;">MINOR</p>
   <ul>
