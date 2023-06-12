@@ -3,6 +3,7 @@ package de.adito.nbm.encoding;
 import com.google.common.cache.*;
 import de.adito.nbm.encoding.options.EncodingOptionsPanel;
 import de.adito.nbm.encoding.statusline.StatusLineEncodingProvider;
+import lombok.NonNull;
 import org.jetbrains.annotations.*;
 import org.mozilla.universalchardet.UniversalDetector;
 import org.netbeans.spi.queries.FileEncodingQueryImplementation;
@@ -34,7 +35,7 @@ public class CharDetEncodingProvider extends FileEncodingQueryImplementation
 
   @Nullable
   @Override
-  public Charset getEncoding(@NotNull FileObject pFileObject)
+  public Charset getEncoding(@NonNull FileObject pFileObject)
   {
     try
     {

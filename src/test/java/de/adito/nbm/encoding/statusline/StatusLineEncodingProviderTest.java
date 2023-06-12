@@ -1,8 +1,8 @@
 package de.adito.nbm.encoding.statusline;
 
 import de.adito.notification.internal.NotificationFacadeTestUtil;
+import lombok.NonNull;
 import lombok.SneakyThrows;
-import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.*;
 import org.mockito.*;
 import org.netbeans.api.queries.FileEncodingQuery;
@@ -61,7 +61,7 @@ class StatusLineEncodingProviderTest
      * @param pEncoding the encoding that should be passed to the method
      */
     @SneakyThrows
-    private void baseSetEncoding(@NotNull String pEncoding)
+    private void baseSetEncoding(@NonNull String pEncoding)
     {
       OutputStream outputStream = Mockito.mock(OutputStream.class);
 
